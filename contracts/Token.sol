@@ -2,15 +2,15 @@
 pragma solidity ^0.8.0;
 
 contract Token {
-    string public name = "My Token";
-    string public symbol = "MYHARD";
-    uint256 public totalSupply = 1000000;
-    mapping(address => uint256) public balances;
-
-    constructor() {
-        balances[msg.sender] = totalSupply;
-    }
-
+    string public name;
+    string public symbol = "DAPP";
+    uint256 public decimals = 18;
+    uint256 public totalSupply = 1000000 * (10 ** decimals); //10^ decimals = 10^18
     
+   constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
+       name = _name;
+       symbol = _symbol;
+       totalSupply = _totalSupply * (10 ** decimals); //10^ decimals = 10^18
+   }
 
 }
