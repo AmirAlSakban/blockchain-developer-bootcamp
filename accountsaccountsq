@@ -1,0 +1,56 @@
+[1mdiff --git a/contracts/Token.sol b/contracts/Token.sol[m
+[1mindex 05928e8..477ea76 100644[m
+[1m--- a/contracts/Token.sol[m
+[1m+++ b/contracts/Token.sol[m
+[36m@@ -6,11 +6,18 @@[m [mcontract Token {[m
+     string public symbol = "DAPP";[m
+     uint256 public decimals = 18;[m
+     uint256 public totalSupply = 1000000 * (10 ** decimals); //10^ decimals = 10^18[m
+[32m+[m
+[32m+[m[32m    //track balances for each account[m
+[32m+[m[32m    mapping(address => uint256) public balanceOf;[m
+[32m+[m
+[32m+[m[32m    //send tokens[m[41m [m
+[32m+[m
+     [m
+    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {[m
+        name = _name;[m
+        symbol = _symbol;[m
+        totalSupply = _totalSupply * (10 ** decimals); //10^ decimals = 10^18[m
+[32m+[m[32m       balanceOf[msg.sender] = totalSupply;[m
+    }[m
+ [m
+ }[m
+[1mdiff --git a/test/Token.js b/test/Token.js[m
+[1mindex 023d16a..bdd91ee 100644[m
+[1m--- a/test/Token.js[m
+[1m+++ b/test/Token.js[m
+[36m@@ -7,12 +7,15 @@[m [mconst tokens = (n) => {[m
+ };[m
+ [m
+ describe('Token', () => {[m
+[31m-    let token;[m
+[32m+[m[32m    let token, accounts, deployer;[m
+ [m
+     beforeEach(async () => {[m
+         //fetch token from blockchain[m
+         const Token = await ethers.getContractFactory('Token')[m
+         token =await Token.deploy('Dapp University', 'DAPP', '1000000')[m
+[32m+[m
+[32m+[m[32m        accounts = await ethers.getSigners();//get an array with all accounts[m
+[32m+[m[32m        deployer = accounts[0];// get the first account from the array[m
+     });[m
+     [m
+ describe('Deployment', () => {[m
+[36m@@ -38,6 +41,10 @@[m [mdescribe('Deployment', () => {[m
+         expect(await token.totalSupply()).to.equal(totalSupply)[m
+     });[m
+ [m
+[32m+[m[32m    it('assigns total supply to deployer', async () => {[m[41m  [m
+[32m+[m[32m        expect(await token.balanceOf(deployer.address)).to.equal(totalSupply)[m
+[32m+[m[32m    });[m
+[32m+[m
+ });[m
+ [m
+ });[m
+\ No newline at end of file[m

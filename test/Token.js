@@ -7,12 +7,15 @@ const tokens = (n) => {
 };
 
 describe('Token', () => {
-    let token;
+    let token, accounts, deployer;
 
     beforeEach(async () => {
         //fetch token from blockchain
         const Token = await ethers.getContractFactory('Token')
         token =await Token.deploy('Dapp University', 'DAPP', '1000000')
+
+        accounts = await ethers.getSigners();//get an array with all accounts
+        deployer = accounts[0];// get the first account from the array
     });
     
 describe('Deployment', () => {
@@ -36,6 +39,10 @@ describe('Deployment', () => {
 
     it('has correct total supply', async () => {  
         expect(await token.totalSupply()).to.equal(totalSupply)
+    });
+
+    it('assigns total supply to deployer', async () => {  
+        expect(await token.balanceOf(deployer.address)).to.equal(totalSupply)
     });
 
 });
