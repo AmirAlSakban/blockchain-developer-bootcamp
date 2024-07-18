@@ -7,7 +7,7 @@ const tokens = (n) => {
 };
 
 describe('Token', () => {
-    let token, accounts, deployer, receiver;
+    let token, accounts, deployer, receiver, exchange;
 
     beforeEach(async () => {
         //fetch token from blockchain
@@ -17,6 +17,7 @@ describe('Token', () => {
         accounts = await ethers.getSigners();//get an array with all accounts
         deployer = accounts[0];// get the first account from the array
         receiver = accounts[1];// get the second account from the array
+        exchange = accounts[2];// get the third account from the array
     });
         
     describe('Deployment', () => {
@@ -88,6 +89,43 @@ describe('Token', () => {
             });
         });
     
-    })
+    });
+
+    describe('Approving Tokens', () => {
+        let amount, transaction, result;
+
+        beforeEach(async () => {
+            amount = tokens('100')
+            transaction = await token.connect(deployer).approve(receiver.address, amount)
+            result = await transaction.wait()
+        });
+
+        describe('Success', async () => {
+            if('allocates an allowance for delegated token spending', async () => {
+                amount = tokens('100')
+                await token.connect(deployer).approve(receiver.address, amount)
+                expect(await token.allowance(deployer.address, receiver.address)).to.equal(amount)
+            });
+        });
+
+        it('emits Approval event', async () => {
+            const event = result.events[0]
+            expect(event.event).to.equal('Approval')
+
+            const args = event.args
+            expect(args.owner).to.equal(deployer.address)
+            expect(args.spender).to.equal(receiver.address)
+            expect(args.value).to.equal(amount)
+        });
+
+
+        describe('Failure', async () => {
+            it('rejects invalid spender', async () => {
+                await expect(token.connect(deployer).approve(ethers.constants.AddressZero, amount)).to.be.reverted
+            });
+        });
+
+
+    });
 
 });
