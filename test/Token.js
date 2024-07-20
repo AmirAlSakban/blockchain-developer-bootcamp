@@ -144,12 +144,12 @@ describe('Token', () => {
             });
 
             it('transfers token balances', async () => {
-                expect(await token.balanceOf(deployer.address)).to.equal(tokens(999900))
-                expect(await token.balanceOf(receiver.address)).to.equal(amount)
+                expect(await token.balanceOf(deployer.address)).to.be.equal(tokens(999900)) //to.be.equal and to.equal are functionally equivalent 
+                expect(await token.balanceOf(receiver.address)).to.be.equal(amount)
             });
 
             it('resets the allowance', async () => {
-                expect(await token.allowance(deployer.address, exchange.address)).to.equal(0)
+                expect(await token.allowance(deployer.address, exchange.address)).to.be.equal(0)
             });
 
             it('emits Transfer event', async () => {
@@ -165,11 +165,10 @@ describe('Token', () => {
 
         describe('Failure', async () => {
             // //attempt to transfer too many tokens
-            // const invalidAmount = tokens('100000000') // 100 million - greater than total supply
-            // it('rejects insufficient amounts', async () => {
-            //     await expect(token.connect(exchange).transferFrom(deployer.address, receiver.address, invalidAmount)).to.be.revertedWith('Insufficient balance')
-            // });
+            const invalidAmount = tokens('100000000') // 100 million - greater than total supply
+            await expect(token.connect(exchange).transferFrom(deployer.address, receiver.address, invalidAmount)).to.be.revertedWith('Insufficient balance')
         });
+        
     });
 
 });

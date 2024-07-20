@@ -85,6 +85,7 @@ contract Token {
         public 
         returns (bool success) 
     {
+        //check if the sender has enough tokens
         require(_from != address(0), "Invalid address");
         require(_to != address(0), "Invalid address");
         require(_value <= balanceOf[_from], "Insufficient balance");
@@ -95,6 +96,7 @@ contract Token {
 
         allowance[_from][msg.sender] -= _value;
 
+        //spend tokens
         emit Transfer(_from, _to, _value);
         // _transfer(_from, _to, _value);
         return true;
