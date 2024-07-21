@@ -87,6 +87,7 @@ contract Token {
         returns (bool success) 
     {
         //check if the sender has enough tokens
+        // console.log(_from, _to, _value);
         require(_from != address(0), "Invalid address");
         require(_to != address(0), "Invalid address");
         require(_value <= balanceOf[_from], "Insufficient balance");
