@@ -9,11 +9,22 @@ contract Exchange {
     mapping(address => mapping(address => uint256)) public tokens; //user mapping
     mapping(uint256 => _Order) public orders; //order mapping
     uint256 public orderCount; //number of orders in the mapping 
+    mapping(uint256 => bool) public orderCancelled; //mapping to check if an order has been cancelled
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(address token, address user, uint256 amount, uint256 balance);
 
     event Order(
+        uint256 id, 
+        address user, 
+        address tokenGet, 
+        uint256 amountGet, 
+        address tokenGive, 
+        uint256 amountGive, 
+        uint256 timestamp
+    );
+
+    event Cancel(
         uint256 id, 
         address user, 
         address tokenGet, 
@@ -112,8 +123,33 @@ contract Exchange {
                 _amountGive,
                 block.timestamp //time the order was created, using epoch time (seconds since 1970); block.timestamp is a global variable that gives the current block timestamp
             ); 
+
         //require that the amount is greater than 0
         require(_amountGet > 0 && _amountGive > 0);
+        }
 
-    }
+        function cancelOrder(uint256 _id) public {
+            //fetch the order 
+            _Order storage _order = orders[_id]; //storage is a keyword that tells the compiler to store the value in the state variable, not in memory
+
+            //must be "my" order
+            require(address(_order.user) == msg.sender); //check if the user is the owner of the order
+             
+            require(_order.id == _id); //check if the order exists and is valid
+             
+            orderCancelled[_id] = true; //set the order to cancelled
+            // //remove the order
+            // delete orders[_id];
+
+            //emit event
+            emit Cancel(
+                _order.id,
+                msg.sender,
+                _order.tokenGet,
+                _order.amountGet,
+                _order.tokenGive,
+                _order.amountGive,
+                block.timestamp
+            );
+        }
 }
