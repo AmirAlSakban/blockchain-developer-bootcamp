@@ -7,16 +7,42 @@ contract Exchange {
     address public feeAccount;
     uint256 public feePercent;
     mapping(address => mapping(address => uint256)) public tokens; //user mapping
+    mapping(uint256 => _Order) public orders; //order mapping
+    uint256 public orderCount; //number of orders in the mapping 
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(address token, address user, uint256 amount, uint256 balance);
+
+    event Order(
+        uint256 id, 
+        address user, 
+        address tokenGet, 
+        uint256 amountGet, 
+        address tokenGive, 
+        uint256 amountGive, 
+        uint256 timestamp
+    );
+
+    //orders mapping
+    //a struct is a user-defined data type that is used to store a collection of data. This data can be of different types.
+    //a way to model the data of an order
+    struct _Order {
+        uint256 id; //unique identifier for the order
+        address user; //the user that created the order
+        address tokenGet; //token that the user wants to get
+        uint256 amountGet; //amount of token that the user wants to get
+        address tokenGive; //token that the user wants to give
+        uint256 amountGive; //amount of token that the user wants to give
+        uint256 timestamp; //time the order was created
+    }
 
     constructor(address _feeAccount, uint256 _feePercent) {
         feeAccount = _feeAccount;
         feePercent = _feePercent;
     }
+
     //--------------------------
-    //deposit and withdraw token
+    //DEPOSIT AND WITHDRAW TOKEN
     function depositToken(address _token, uint256 _amount) public {
         //transfer tokens to exchange
         require(Token(_token).transferFrom(msg.sender, address(this), _amount)); //address(this) retrieves the Ethereum address of the contract where this expression is used
@@ -48,5 +74,46 @@ contract Exchange {
     view
     returns (uint256) {
         return tokens[_token][_user];
+    }
+
+    //-------------------------
+    // MAKE AND CANCEL ORDERS
+    
+    //token Give is the token that the user is giving
+    //token Get is the token that the user is getting
+    function makeOrder(
+        address _tokenGet, 
+        uint256 _amountGet,
+        address _tokenGive,
+        uint256 _amountGive
+        ) public {
+            //Prevent orders if tokens are'nt on the exchange
+            require(balanceOf(_tokenGive, msg.sender) >= _amountGive);
+
+            //Instantiate a new order   
+            orderCount += 1; //increment the order count
+            orders[orderCount] = _Order(
+                orderCount, //unique identifier for the order
+                msg.sender, //the user that created the order 
+                _tokenGet, 
+                _amountGet,
+                _tokenGive, 
+                _amountGive,
+                block.timestamp //time the order was created, using epoch time (seconds since 1970); block.timestamp is a global variable that gives the current block timestamp
+                ); 
+
+            //emit an event
+            emit Order(
+                orderCount, //unique identifier for the order
+                msg.sender, //the user that created the order 
+                _tokenGet, 
+                _amountGet,
+                _tokenGive, 
+                _amountGive,
+                block.timestamp //time the order was created, using epoch time (seconds since 1970); block.timestamp is a global variable that gives the current block timestamp
+            ); 
+        //require that the amount is greater than 0
+        require(_amountGet > 0 && _amountGive > 0);
+
     }
 }
