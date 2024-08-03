@@ -1,0 +1,11 @@
+!!!!!!!!!!
+ daca faci modificari in smart contract trebuie sa copiezi din nou abi-urile din artifacts/contracts/exchange.sol/exchange.json 
+respectiv artifacts/contracts/token.sol/token.json  si  si sa le dai paste in src/abis/exchange.json
+respectiv src/abis/token.json 
+
+copiezi doar ce e in paranteze patrate dupa "abi": [.....] si ii dai paste unde am zis mai sus ( copiezi inclusiv parantezele patrate)
+
+You should update the ABI in the following situations:
+Contract Code Changes: Any modifications to the smart contract's functions, parameters, return types, or emitted events.
+Recompilation: Whenever the contract is recompiled, even if no changes to the contract code have been made, to ensure any updates due to changes in compiler behavior are captured.
+Contract Redeployment: After redeploying contracts, especially if they are on a development network and the contract code might have been iteratively updated.
