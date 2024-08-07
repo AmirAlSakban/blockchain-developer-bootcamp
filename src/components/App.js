@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux';
 import config from '../config.json';
 
 import { 
-  loadProvider, 
-  loadNetwork, 
-  loadAccount, 
-  loadToken
+  loadProvider,
+  loadNetwork,
+  loadAccount,
+  loadTokens,
+  loadExchange
 } from '../store/interactions';
 
 function App() {
@@ -14,15 +15,22 @@ function App() {
   const dispatch = useDispatch();
 
   const loadBlockchainData = async () => {
-    await loadAccount(dispatch);
 
     //connect ethers to the blockchain
     const provider = loadProvider(dispatch);
-    const chainId = await loadNetwork(provider, dispatch);
-    
+    //fetch current network id (e.g. 1 for Ethereum Mainnet, 4 for Rinkeby Testnet, 31337 for hardhat local network)
+    const chainId = await loadNetwork(provider, dispatch);    
+    //fetch current account and balance from metamask
+    await loadAccount(provider, dispatch);
 
-    //Token Smart Contract
-    await loadToken(provider, config[chainId].DApp.address, dispatch);
+    //load Token Smart Contracts
+    const DApp = config[chainId].DApp
+    const mETH = config[chainId].mETH
+    await loadTokens(provider, [DApp.address, mETH.address], dispatch);
+
+    //load Exchange Smart Contract
+    const exchangeConfig = config[chainId].exchange
+    await loadExchange(provider, exchangeConfig.address, dispatch);
   }
 
   useEffect(() => {
