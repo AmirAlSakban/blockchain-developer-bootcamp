@@ -89,7 +89,6 @@ async function main() {
     //
 
     //user1 makes an order to get tokens
-    orderId = 2;
     transaction = await exchange.connect(user1).makeOrder(mETH.address, tokens(100), DApp.address, tokens(10));
     result = await transaction.wait();
     console.log(`Order made by ${user1.address}\n`);
@@ -104,7 +103,6 @@ async function main() {
     await wait(1);
 
     //User 1 makes another order 
-    orderId = 3;
     transaction = await exchange.connect(user1).makeOrder(mETH.address, tokens(50), DApp.address, tokens(15));
     result = await transaction.wait();
     console.log(`Order made by ${user1.address}\n`);
