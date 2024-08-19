@@ -55,6 +55,70 @@ const decorateOrder = (order, tokens) => {
 }
 
 //------------------
+// FILLED ORDERS
+
+export const filledOrdersSelector = createSelector(
+    filledOrders,
+    tokens, 
+    (orders, tokens) => {
+        if (!tokens[0] || !tokens[1]) { return }//this is a safeguard to prevent the function from running if tokens[0] or tokens[1] are not defined
+    
+        // Filter orders by selected tokens
+        orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address)//this will filter the orders to only show the orders that are for the selected tokens
+        orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address)
+
+        // Step 1: sort orders by time ascending
+        // Step 2: apply order colors (decorate orders)
+        // Step 3: sort orders by time descending for UI
+
+        // Sort orders by date ascending for price comparison
+        orders = orders.sort((a, b) => a.timestamp - b.timestamp)
+
+        // Decorate orders
+        orders = decorateFilledOrders(orders, tokens)
+
+        orders = orders.sort((a, b) => b.timestamp - a.timestamp)
+
+        return orders
+    }
+)
+
+const decorateFilledOrders = (orders, tokens) => {
+    // track previous order to compare history
+    let previousOrder = orders[0]
+
+    return(
+        orders.map((order) => {
+            //decorate each order
+            order = decorateOrder(order, tokens)
+            order = decorateFilledOrder(order, previousOrder)
+            previousOrder = order //update previous order
+            return order
+        })
+    )
+}
+
+const decorateFilledOrder = (order, previousOrder) => {
+    return ({
+        ...order,
+        tokenPriceClass: tokenPriceClass(order.tokenPrice, order.id, previousOrder)
+    })
+}
+
+const tokenPriceClass = (tokenPrice, orderId, previousOrder) => {
+    if (previousOrder.id === orderId) {
+        return GREEN
+    }
+    
+    // Show green price if order price is higher than previous order, red if lower
+    if (previousOrder.tokenPrice <= tokenPrice) {
+        return GREEN
+    } else {
+        return RED
+    }
+}
+
+//------------------
 // ORDER BOOK
 
 export const orderBookSelector = createSelector(
@@ -65,7 +129,7 @@ export const orderBookSelector = createSelector(
     if (!tokens[0] || !tokens[1]) { return }//this is a safeguard to prevent the function from running if tokens[0] or tokens[1] are not defined
     
     // Filter orders by selected tokens
-    orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address)
+    orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address)//this will filter the orders to only show the orders that are for the selected tokens
     orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address)
     
     // Decorate orders
