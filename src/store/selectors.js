@@ -1,12 +1,10 @@
 import { createSelector } from 'reselect';
-import { get, groupBy, reject, maxBy, minBy, last } from 'lodash';
+import { get, groupBy, reject, maxBy, minBy } from 'lodash';
 import { ethers } from 'ethers';
 import moment from 'moment';
-import { series } from '../components/PriceChart.config';
 
 const tokens = state => get(state, 'tokens.contracts')
 const account = state => get(state, 'provider.account')
-
 
 const allOrders = state => get(state, 'exchange.allOrders.data', [])
 const cancelledOrders = state => get(state, 'exchange.cancelledOrders.data', [])
@@ -166,6 +164,57 @@ const tokenPriceClass = (tokenPrice, orderId, previousOrder) => {
         return RED
     }
 }
+
+//------------------
+// MY FILLED ORDERS
+export const myFilledOrdersSelector = createSelector(
+    account,
+    tokens,
+    filledOrders,
+    (account, tokens, orders) => {
+      if (!tokens[0] || !tokens[1]) { return }
+        orders = orders.filter((o) => o.user === account || o.creator === account)
+        //filter orders for current trading pair
+        orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address)
+        orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address)
+
+        //sort by date descending
+        orders = orders.sort((a, b) => b.timestamp - a.timestamp)
+
+        //decorate orders - add display attributes
+        orders = decorateMyFilledOrders(orders, account, tokens)
+
+        return orders
+  }
+)
+
+const decorateMyFilledOrders = (orders, account, tokens) => {
+    return(
+      orders.map((order) => {
+        order = decorateOrder(order, tokens)
+        order = decorateMyFilledOrder(order, account, tokens)
+        return(order)
+      })
+    )
+  }
+  
+  const decorateMyFilledOrder = (order, account, tokens) => {
+    const myOrder = order.creator === account  
+
+    let orderType = order.tokenGive === tokens[1].address ? 'buy' : 'sell'
+    if(myOrder){
+        orderType = order.tokenGive === tokens[1].address ? 'sell' : 'buy'
+        }
+    else{
+
+    }
+    return({
+        ...order,
+        orderType,
+        orderClass: (orderType === 'buy' ? GREEN : RED),
+        orderSign: (orderType === 'buy' ? '+' : '-')
+    })
+  }
 
 //------------------
 // ORDER BOOK
