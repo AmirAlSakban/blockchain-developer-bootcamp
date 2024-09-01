@@ -14,6 +14,36 @@
       },
       "explorerURl": "#"
     },
+    "11155111": {
+      "exchange": {
+        "address": "0x35C512e1f37f01d601127a71527336E3a1ABd5A0"
+      },
+      "DApp": {
+        "address": "0x18eCfCbC4119f3133EF1AE0e31d6d2356fD6D282"
+      },
+      "mETH": {
+        "address": "0xEd3Dcf278C658831FC826E81774a3610335B2D35"
+      },
+      "mDAI": {
+        "address": "0x49517Ad0Cbd743094102E7EeAcd38900BF8eaC63"
+      },
+      "explorerURL": "https://sepolia.etherscan.io/"
+    },
+    "80002": {
+      "exchange": {
+        "address": "0x35C512e1f37f01d601127a71527336E3a1ABd5A0"
+      },
+      "DApp": {
+        "address": "0x18eCfCbC4119f3133EF1AE0e31d6d2356fD6D282"
+      },
+      "mETH": {
+        "address": "0xEd3Dcf278C658831FC826E81774a3610335B2D35"
+      },
+      "mDAI": {
+        "address": "0x49517Ad0Cbd743094102E7EeAcd38900BF8eaC63"
+      },
+      "explorerURL": "https://amoy.polygonscan.com/"
+    },
     "42": {
       "explorerURL": "https://kovan.etherscan.io/"
     }
