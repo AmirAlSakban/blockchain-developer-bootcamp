@@ -38,7 +38,8 @@ const Alert = () => {
                 <div className="alert alert--remove" onClick={removeHandler} ref={alertRef}>
                     <h1>Transaction Successful</h1>
                     <a
-                        href={config[network] ? `${config[network].explorerUrl}/tx/${events[0].transactionHash}` : '#'} //this line dynamically generates the URL for the transaction based on the network configuration and the transaction hash, or sets it to '#' if the network configuration is not available.
+                        href={config[network] ? `${config[network].explorerURL}/tx/${events[0].transactionHash}` : '#'} //this line dynamically generates the URL for the transaction based on the network configuration and the transaction hash, or sets it to '#' if the network configuration is not available.
+                        // href={config[network]?.explorerURL? `${config[network].explorerURL}/tx/${events[0].transactionHash}`: '#'}
                         target='_blank'
                         rel='noreferrer'
                     >
