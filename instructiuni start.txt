@@ -1,0 +1,23 @@
+deschizi 3 taburi de git bash
+1. npx hardhat node ( deschizi nod de hardhat)
+2. faci deploy la contract si il seed-uiesti prin scripturile 1_deploy.js si 2_seed-exchange.js
+comenzile sunt: npx hardhat run --network localhost scripts/1_deploy sau 2_.....
+in loc de localhost poti sa pui sepolia sau amoy sau orice alt network ai configurat
+npx hardhat run --network sepolia scripts/1_deploy sau 2_.....
+dupa ce ai dat deploy prin script-ul 1 te asiguri ca sunt deployate contractele verificand adresele de pe consola sa fie la fel ca alea din config.json; pt asta poti rula direct script-ul checkDeployments.js ca pe celelalte 2
+daca sunt deployate rulezi scriptul 2_seed-exchange, daca nu copiezi manual adresele din terminal si le inlocuiesti in config.json, abia apoi rulezi script-ul 2
+
+3. Abia dupa ce ai dat deploy la contracte initializezi website-ul pt a preveni aparitia problemelor
+npm run start
+
+procedura e aceeasi la orice network, doar ca pe retelele de test va trebui sa obtii niste crypto de test de pe un faucet on-line
+exp: 
+https://faucets.chain.link/
+https://cloud.google.com/application/web3/faucet/ethereum/sepolia
+https://faucet.polygon.technology/
+
+pt a pune pe github:
+git status ca sa vezi ce modificari au fost aduse
+git add . pt a le "adauga in lista de lucruri pe care le pui pe github"
+git commit -am "descrierea commit-ului intre ghilimele"
+
